@@ -8,6 +8,9 @@ public class AutoPhysicRig : MonoBehaviour
     [SerializeField] Transform[] _endChains;
     [SerializeField] Transform[] _endChainsAnim;
     [SerializeField] Transform _animModel;
+    [SerializeField] bool _isWolrdRotationEnable = true;
+    [SerializeField] bool _isLocalRotationBonesEnable = true;
+    [SerializeField] bool _isOffsetedBonesEnable = true;
 
     private void Start()
     {
@@ -52,7 +55,8 @@ public class AutoPhysicRig : MonoBehaviour
         ph.angularXDrive = drive;   //Apply motion parameter on axis
         ph.angularYZDrive = drive;
         ph.rotationDriveMode = RotationDriveMode.XYAndZ;  //Rotation mod
-        ph.configuredInWorldSpace = true;    //Can recieve worldspace values
+        if (_isWolrdRotationEnable)
+            ph.configuredInWorldSpace = true;    //Can recieve worldspace values
 
         //Liberty of movements for articulations
         ph.angularXMotion = ConfigurableJointMotion.Free;
@@ -69,6 +73,8 @@ public class AutoPhysicRig : MonoBehaviour
 
         //AnimeScript
         anim.TargetBone = tfAnim;
+        anim.IsLocal = _isLocalRotationBonesEnable;
+        anim.IsOffseted = _isOffsetedBonesEnable;
 
         if (tf.parent.GetComponent<AnimatePhysicJoint>() != null || tf.parent.GetComponent<AutoPhysicRig>() != null)
             ph.connectedBody = tf.parent.GetComponent<Rigidbody>();

@@ -738,7 +738,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -2, y: 3, z: 8}
+  m_LocalPosition: {x: -2.52, y: 2.63, z: 5.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2294,6 +2294,9 @@ MonoBehaviour:
   _endChainsAnim:
   - {fileID: 618864773}
   _animModel: {fileID: 615676919}
+  _isWolrdRotationEnable: 1
+  _isLocalRotationBonesEnable: 1
+  _isOffsetedBonesEnable: 1
 --- !u!4 &908972539
 Transform:
   m_ObjectHideFlags: 0
@@ -3603,6 +3606,9 @@ MonoBehaviour:
   - {fileID: 1002657380}
   - {fileID: 1620412893}
   _animModel: {fileID: 1880882166}
+  _isWolrdRotationEnable: 1
+  _isLocalRotationBonesEnable: 1
+  _isOffsetedBonesEnable: 1
 --- !u!1 &1159781994
 GameObject:
   m_ObjectHideFlags: 0
@@ -4727,6 +4733,9 @@ MonoBehaviour:
   - {fileID: 1029760783}
   - {fileID: 1029760782}
   _animModel: {fileID: 1029760781}
+  _isWolrdRotationEnable: 0
+  _isLocalRotationBonesEnable: 1
+  _isOffsetedBonesEnable: 1
 --- !u!54 &1776818012
 Rigidbody:
   m_ObjectHideFlags: 0
