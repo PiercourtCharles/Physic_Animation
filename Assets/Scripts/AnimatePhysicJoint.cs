@@ -5,6 +5,7 @@ public class AnimatePhysicJoint : MonoBehaviour
     public Transform TargetBone;
 
     [SerializeField] bool _isLocal = true;
+    [SerializeField] bool _isInvert = true;
 
     ConfigurableJoint _joint;
 
@@ -24,8 +25,10 @@ public class AnimatePhysicJoint : MonoBehaviour
             else
                 rot = TargetBone.rotation;
 
-            Quaternion newTargetRotation = Quaternion.Inverse(rot);
-            _joint.targetRotation = newTargetRotation;
+            if (_isInvert)
+                rot = Quaternion.Inverse(rot);
+
+            _joint.targetRotation = rot;
         }
     }
 }
