@@ -1170,7 +1170,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
       propertyPath: m_Name
-      value: Pick Up Item
+      value: Physic
       objectReference: {fileID: 0}
     - target: {fileID: 1092408308860062549, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1482,9 +1482,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1776818011}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1776818014}
   m_SourcePrefab: {fileID: 100100000, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
 --- !u!1 &342382862 stripped
 GameObject:
@@ -2031,65 +2028,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
   m_PrefabInstance: {fileID: 618864772}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &677054353
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 677054355}
-  - component: {fileID: 677054354}
-  m_Layer: 0
-  m_Name: Pivot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!54 &677054354
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 677054353}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 0
---- !u!4 &677054355
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 677054353}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 938442312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &758084064
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2344,6 +2282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008a815a852fc8f458f367538eaeee57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Actualize: 0
   _endChains:
   - {fileID: 1522029189}
   _endChainsAnim:
@@ -2352,6 +2291,7 @@ MonoBehaviour:
   _isOffsetedBonesEnable: 1
   _positionSpring: 20000
   _positionDamper: 1000
+  _connectedMassScale: 0.1
   _useAcceleration: 1
   _configuredInWorldSpace: 0
   _useGravity: 1
@@ -2431,7 +2371,6 @@ Transform:
   m_Children:
   - {fileID: 1029760781}
   - {fileID: 1776818013}
-  - {fileID: 677054355}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &953366227
@@ -2622,18 +2561,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 938442312}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.28
@@ -3000,7 +2927,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
       propertyPath: m_Name
-      value: Pick Up Item
+      value: Anim
       objectReference: {fileID: 0}
     - target: {fileID: 1092408308860062549, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3689,6 +3616,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008a815a852fc8f458f367538eaeee57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Actualize: 0
   _endChains:
   - {fileID: 1394635563}
   - {fileID: 1773632262}
@@ -3701,6 +3629,7 @@ MonoBehaviour:
   _isOffsetedBonesEnable: 1
   _positionSpring: 20000
   _positionDamper: 1000
+  _connectedMassScale: 0.1
   _useAcceleration: 1
   _configuredInWorldSpace: 0
   _useGravity: 1
@@ -4801,6 +4730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008a815a852fc8f458f367538eaeee57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Actualize: 0
   _endChains:
   - {fileID: 342382875}
   - {fileID: 342382874}
@@ -4833,6 +4763,7 @@ MonoBehaviour:
   _isOffsetedBonesEnable: 1
   _positionSpring: 20000
   _positionDamper: 1000
+  _connectedMassScale: 0.3
   _useAcceleration: 1
   _configuredInWorldSpace: 0
   _useGravity: 1
@@ -4860,55 +4791,16 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 12
   m_CollisionDetection: 0
 --- !u!4 &1776818013 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1d3b88f856e9b7b419f90d76644dc995, type: 3}
   m_PrefabInstance: {fileID: 342382861}
   m_PrefabAsset: {fileID: 0}
---- !u!59 &1776818014
-HingeJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 342382862}
-  m_ConnectedBody: {fileID: 677054354}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0, z: 0}
-  m_Axis: {x: 1, y: 0, z: 0}
-  m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -3.3270001, z: 0}
-  serializedVersion: 2
-  m_UseSpring: 0
-  m_Spring:
-    spring: 0
-    damper: 0
-    targetPosition: 0
-  m_UseMotor: 0
-  m_Motor:
-    targetVelocity: 0
-    force: 0
-    freeSpin: 0
-  m_UseLimits: 0
-  m_ExtendedLimits: 0
-  m_UseAcceleration: 0
-  m_Limits:
-    min: 0
-    max: 0
-    bounciness: 0
-    bounceMinVelocity: 0.2
-    contactDistance: 0
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!1 &1880882165
 GameObject:
   m_ObjectHideFlags: 0
