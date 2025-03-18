@@ -1,5 +1,7 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
 public class AngleTestScript : MonoBehaviour
 {
@@ -37,10 +39,6 @@ public class AngleTestScript : MonoBehaviour
     {
         _c = (_objC.position - _objA.position).magnitude;
 
-        var difference = _objC.position - _objA.position;
-        var pythagore = Mathf.Sqrt(Mathf.Pow(_a, 2)) + Mathf.Sqrt(Mathf.Pow(_c, 2));
-        Vector3 posB = _objA.position + (difference * pythagore).normalized * difference.magnitude / 2; //Aled a revoir
-
         var a = CalculAngle(_a, _b, _c);
         var b = CalculAngle(_b, _c, _a);
         var c = CalculAngle(_c, _a, _b);
@@ -49,10 +47,34 @@ public class AngleTestScript : MonoBehaviour
         _resultB = ToDegree(b);
         _resultC = ToDegree(c);
 
-        _boneA.Rotate(Vector3.back, 180 - _resultA);
-        _boneB.Rotate(Vector3.back, 180 - _resultB);
+        //_boneA.Rotate(Vector3.back, 180 - _resultA);
+        //_boneB.Rotate(Vector3.back, 180 - _resultB);
         //_boneC.Rotate(Vector3.back, 180 - _resultC);
-        _target.position = posB;
+
+        // Vecteur AC && normalisation de AC
+        Vector3 AC = _objC.position - _objA.position;
+        float distanceAC = AC.magnitude;
+        distanceAC = Mathf.Clamp(distanceAC, 0.0001f, _a + _b - 0.0001f); // Clamp la distance pour éviter des erreurs si la cible est trop loin
+        Vector3 AC_normalized = AC.normalized;
+
+        // Loi des cosinus pour trouver l'angle au coude
+        float cosTheta = (_a * _a + distanceAC * distanceAC - _b * _b) / (2 * _a * distanceAC);
+        float theta = Mathf.Acos(cosTheta); // Angle en radians
+
+        // Trouver un vecteur perpendiculaire à AC
+        Vector3 axis = Vector3.Cross(Vector3.up, AC_normalized); // Utilise "up" par défaut
+        if (axis.magnitude < 0.001f) // Si "up" est parallèle à AC, prend un autre axe
+            axis = Vector3.Cross(Vector3.right, AC_normalized);
+        axis.Normalize();
+
+        // Rotation de AC pour positionner B
+        Quaternion rotation = Quaternion.AngleAxis(theta * Mathf.Rad2Deg, axis);
+        Vector3 AB = rotation * AC_normalized * _a;
+
+        _target.position = _objA.position + AB;
+
+        _boneA.LookAt(_objB.position);
+        _boneB.LookAt(_objC.position);
     }
 
     void ResetValues()

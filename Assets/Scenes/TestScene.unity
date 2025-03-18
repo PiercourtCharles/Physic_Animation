@@ -592,7 +592,7 @@ MonoBehaviour:
   _boneB: {fileID: 1318531046}
   _boneC: {fileID: 783079151}
   _objA: {fileID: 1009348401}
-  _objB: {fileID: 0}
+  _objB: {fileID: 1372733257}
   _objC: {fileID: 1188711193}
   _a: 1.5
   _b: 1.5
@@ -1885,11 +1885,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1.4999998
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1913,16 +1913,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
-    - target: {fileID: 5026528678018328886, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
-      propertyPath: m_Icon
-      value: 
-      objectReference: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
     - target: {fileID: 5026528678018328886, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_Name
       value: BoneAnim (2)
@@ -2699,19 +2695,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2719,16 +2715,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
-    - target: {fileID: 5026528678018328886, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
-      propertyPath: m_Icon
-      value: 
-      objectReference: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
     - target: {fileID: 5026528678018328886, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_Name
       value: BoneAnim
@@ -4070,11 +4062,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1.5000002
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4098,16 +4090,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 208715512483820020, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
-    - target: {fileID: 5026528678018328886, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
-      propertyPath: m_Icon
-      value: 
-      objectReference: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
     - target: {fileID: 5026528678018328886, guid: df72375ee6fac234f834662a1cd7f606, type: 3}
       propertyPath: m_Name
       value: BoneAnim (1)
