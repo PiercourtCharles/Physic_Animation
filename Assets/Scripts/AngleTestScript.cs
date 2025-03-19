@@ -5,7 +5,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class AngleTestScript : MonoBehaviour
 {
-    [SerializeField][Tooltip("Ugly button")] bool _Actualize = false;
+    //[SerializeField][Tooltip("Ugly button")] bool _Actualize = false;
     [SerializeField] Transform _target;
     [Header("Targets :")]
     [SerializeField] Transform _boneA;
@@ -37,20 +37,6 @@ public class AngleTestScript : MonoBehaviour
 
     void Initialize()
     {
-        _c = (_objC.position - _objA.position).magnitude;
-
-        var a = CalculAngle(_a, _b, _c);
-        var b = CalculAngle(_b, _c, _a);
-        var c = CalculAngle(_c, _a, _b);
-
-        _resultA = ToDegree(a);
-        _resultB = ToDegree(b);
-        _resultC = ToDegree(c);
-
-        //_boneA.Rotate(Vector3.back, 180 - _resultA);
-        //_boneB.Rotate(Vector3.back, 180 - _resultB);
-        //_boneC.Rotate(Vector3.back, 180 - _resultC);
-
         // Vecteur AC && normalisation de AC
         Vector3 AC = _objC.position - _objA.position;
         float distanceAC = AC.magnitude;
@@ -82,15 +68,5 @@ public class AngleTestScript : MonoBehaviour
         _boneA.rotation = Quaternion.Euler(0, 0, 0);
         _boneB.rotation = Quaternion.Euler(0, 0, 0);
         _boneC.rotation = Quaternion.Euler(0, 0, 0);
-    }
-
-    float CalculAngle(float a, float b, float c)
-    {
-        return Mathf.Round((Mathf.Pow(a, 2) + Mathf.Pow(b, 2) - Mathf.Pow(c, 2)) / (2 * b * c) * 10) / 10;
-    }
-
-    float ToDegree(float number)
-    {
-        return Mathf.Round(((180 * Mathf.Acos(number)) / Mathf.PI) * 10) / 10;
     }
 }
