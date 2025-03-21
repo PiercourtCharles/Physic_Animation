@@ -1,7 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AngleTestScript : MonoBehaviour
+public class NewBehaviourScript : MonoBehaviour
 {
     //[SerializeField][Tooltip("Ugly button")] bool _Actualize = false;
     [SerializeField] Transform _target;
@@ -32,15 +33,22 @@ public class AngleTestScript : MonoBehaviour
 
     void Process()
     {
+        _target.position = _obj[0].position + Get3Point(_obj[0], _obj[1], _obj[2], _distances[0], _distances[1], _distances[2]);
+
+        LookBones();
+    }
+
+    Vector3 Get3Point(Transform tf1, Transform tf2, Transform tf3, float value1, float value2, float value3)
+    {
         // Vecteur AC && normalisation de AC
-        Vector3 AC = _obj[2].position - _obj[0].position;
+        Vector3 AC = tf3.position - tf1.position;
         float distanceAC = AC.magnitude;
-        distanceAC = Mathf.Clamp(distanceAC, 0.0001f, _distances[0] + _distances[1] - 0.0001f); // Clamp la distance pour éviter des erreurs si la cible est trop loin
+        distanceAC = Mathf.Clamp(distanceAC, 0.0001f, value1 + value2 - 0.0001f); // Clamp la distance pour éviter des erreurs si la cible est trop loin
 
         Vector3 AC_normalized = AC.normalized;
 
         // Loi des cosinus pour trouver l'angle au coude
-        float cosTheta = CosinusLaw(_distances[0], _distances[1], distanceAC);
+        float cosTheta = CosinusLaw(value1, value2, distanceAC);
         float theta = Mathf.Acos(cosTheta); // Angle en radians
 
         // Trouver un vecteur perpendiculaire à AC
@@ -51,11 +59,7 @@ public class AngleTestScript : MonoBehaviour
 
         // Rotation de AC pour positionner B
         Quaternion rotation = Quaternion.AngleAxis(theta * Mathf.Rad2Deg, axis);
-        Vector3 AB = rotation * AC_normalized * _distances[0];
-
-        _target.position = _obj[0].position + AB;
-
-        LookBones();
+        return rotation * AC_normalized * value1;
     }
 
     void GetDistance()
