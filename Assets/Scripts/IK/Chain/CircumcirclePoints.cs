@@ -149,20 +149,20 @@ public class CircumcirclePoints : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(A.position, 0.1f);
-        Gizmos.DrawWireSphere(B.position, 0.1f);
-        Gizmos.DrawWireSphere(C.position, 0.1f);
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawWireSphere(A.position, 0.1f);
+    //    Gizmos.DrawWireSphere(B.position, 0.1f);
+    //    Gizmos.DrawWireSphere(C.position, 0.1f);
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(Center, Radius);
+    //    Gizmos.color = Color.blue;
+    //    Gizmos.DrawWireSphere(Center, Radius);
 
-        Gizmos.color = Color.green;
-        for (int i = 0; i < _points.Count - 1; i++)
-        {
-            Gizmos.DrawWireSphere(_points[i], 0.1f);
-        }
-    }
+    //    Gizmos.color = Color.green;
+    //    for (int i = 0; i < _points.Count - 1; i++)
+    //    {
+    //        Gizmos.DrawWireSphere(_points[i], 0.1f);
+    //    }
+    //}
 }

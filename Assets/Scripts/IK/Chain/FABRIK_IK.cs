@@ -10,6 +10,9 @@ public class FABRIK_IK : MonoBehaviour
     private float[] boneLengths; // Stocke les longueurs des segments
     private float totalLength; // Longueur totale de la chaîne
 
+
+
+
     void Start()
     {
         InitBones();
@@ -20,10 +23,13 @@ public class FABRIK_IK : MonoBehaviour
         SolveIK();
     }
 
+
+
+
     void InitBones()
     {
         int numBones = bones.Length;
-        boneLengths = new float[numBones - 1]; // N-1 segments
+        boneLengths = new float[numBones - 1];
         totalLength = 0f;
 
         for (int i = 0; i < numBones - 1; i++)
@@ -40,6 +46,7 @@ public class FABRIK_IK : MonoBehaviour
 
         // Vérifier si la cible est atteignable
         float targetDistance = Vector3.Distance(bones[0].position, target.position);
+
         if (targetDistance > totalLength)
         {
             // Étirement maximal : aligner tous les bones vers la cible
@@ -52,7 +59,6 @@ public class FABRIK_IK : MonoBehaviour
         else
         {
             // Sinon, exécuter FABRIK
-
             Vector3 basePosition = bones[0].position;
 
             for (int iteration = 0; iteration < maxIterations; iteration++)
