@@ -5,6 +5,7 @@ public class SimpleIK : MonoBehaviour
     public Transform[] _bones;
     public Transform _target;
     public Transform _rotationTarget;
+    public Vector3 _offset;
 
     float[] _lengths = new float[2];
     float _totalLength;
@@ -38,7 +39,7 @@ public class SimpleIK : MonoBehaviour
         float shoulderAngle = Mathf.Acos(cosAngle0) * Mathf.Rad2Deg;
 
         //Shoulder rot
-        Quaternion shoulderToTargetRotation = Quaternion.LookRotation(shoulderToTarget, axis);
+        Quaternion shoulderToTargetRotation = Quaternion.LookRotation(shoulderToTarget, axis) * Quaternion.Euler(_offset);
         _bones[0].rotation = shoulderToTargetRotation;
 
         //Shoulder rot target
@@ -46,6 +47,6 @@ public class SimpleIK : MonoBehaviour
 
         //Elbow rot
         Vector3 elbowToHand = _target.position - _bones[1].position;
-        _bones[1].rotation = Quaternion.LookRotation(elbowToHand, axis);
+        _bones[1].rotation = Quaternion.LookRotation(elbowToHand, axis) * Quaternion.Euler(_offset);
     }
 }
