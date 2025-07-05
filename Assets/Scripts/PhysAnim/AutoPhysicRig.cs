@@ -1,12 +1,54 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class AutoPhysicRig : MonoBehaviour
 {
-    [Tooltip("Actualize joints values on model in play mode")] public bool Actualize = false;
+#if UNITY_EDITOR
+    [CustomEditor(typeof(AutoPhysicRig))]
+    public class AutoPhysicRigEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            AutoPhysicRig autoRig = (AutoPhysicRig)target;
 
+            if (GUILayout.Button("Setup"))
+            {
+                if (autoRig._isSetup)
+                    autoRig.ResetPhysic();
+
+                autoRig.Initialize(); //If Rigidbody not set correctly
+
+                for (int i = 0; i < autoRig._endChains.Length; i++)
+                {
+                    autoRig.Physicate(autoRig._endChains[i], autoRig._endChainsAnim[i]);
+                }
+
+                autoRig._isSetup = true;
+                Debug.Log("Setup components");
+            }
+
+            if (GUILayout.Button("Update"))
+            {
+                for (int i = 0; i < autoRig._joints.Count; i++)
+                {
+                    autoRig.JointSetUp(autoRig._joints[i]);
+                }
+                Debug.Log("Update values");
+            }
+
+            if (GUILayout.Button("Reset"))
+            {
+                autoRig.ResetPhysic();
+                autoRig._isSetup = false;
+                Debug.Log("Reset components");
+            }
+        }
+    }
+#endif
     [Header("End branches :")]
     [SerializeField] Transform[] _endChains;
     [SerializeField] Transform[] _endChainsAnim;
@@ -28,27 +70,18 @@ public class AutoPhysicRig : MonoBehaviour
     [SerializeField] CollisionDetectionMode _collisionDetectionMode = CollisionDetectionMode.Continuous;
 
     List<ConfigurableJoint> _joints = new List<ConfigurableJoint>();
+    bool _isSetup = false;
 
     private void Start()
     {
+        if (_isSetup)
+            return;
+
         Initialize(); //If Rigidbody not set correctly
 
         for (int i = 0; i < _endChains.Length; i++)
         {
             Physicate(_endChains[i], _endChainsAnim[i]);
-        }
-    }
-
-    private void Update()
-    {
-        if (Actualize)
-        {
-            for (int i = 0; i < _joints.Count; i++)
-            {
-                JointSetUp(_joints[i]);
-            }
-
-            Actualize = false;
         }
     }
 
@@ -61,7 +94,7 @@ public class AutoPhysicRig : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeAll;
         //rb.velocity = Vector3.zero;    //"linearVelocity" because of unity 6 else "velocity"
         //rb.angularVelocity = Vector3.zero;
-    } 
+    }
 
     Rigidbody Physicate(Transform tf, Transform tfAnim)
     {
@@ -120,5 +153,20 @@ public class AutoPhysicRig : MonoBehaviour
         joint.xMotion = ConfigurableJointMotion.Locked;
         joint.yMotion = ConfigurableJointMotion.Locked;
         joint.zMotion = ConfigurableJointMotion.Locked;
+    }
+
+    void ResetPhysic()
+    {
+        for (int i = 0; i < _joints.Count; i++)
+        {
+            var config = _joints[i].GetComponent<ConfigurableJoint>();
+            var anim = _joints[i].GetComponent<AnimatePhysicJoint>();
+            var rb = _joints[i].GetComponent<Rigidbody>();
+            DestroyImmediate(config);
+            DestroyImmediate(anim);
+            DestroyImmediate(rb);
+        }
+
+        _joints.Clear();
     }
 }
