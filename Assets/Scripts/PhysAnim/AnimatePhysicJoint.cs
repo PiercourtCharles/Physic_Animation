@@ -5,6 +5,7 @@ public class AnimatePhysicJoint : MonoBehaviour
     public Transform TargetBone;
     public bool IsLocal = true;
     public bool IsOffseted = true;
+    public bool IsFollowing = true;
 
     [SerializeField] bool _isInvert = true;
 
@@ -34,6 +35,7 @@ public class AnimatePhysicJoint : MonoBehaviour
             if (IsOffseted)
                 rot = rot * _offset;
 
+            if (IsFollowing)
             _joint.targetRotation = rot;
         }
     }

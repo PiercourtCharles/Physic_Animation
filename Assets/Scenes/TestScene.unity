@@ -2549,13 +2549,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008a815a852fc8f458f367538eaeee57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Actualize: 0
   _endChains:
   - {fileID: 1522029189}
   _endChainsAnim:
   - {fileID: 618864773}
   _isLocalRotationBonesEnable: 1
   _isOffsetedBonesEnable: 1
+  _isFollowingRotation: 1
   _positionSpring: 20000
   _positionDamper: 1000
   _connectedMassScale: 0.1
@@ -2564,8 +2564,7 @@ MonoBehaviour:
   _useGravity: 1
   _interpolation: 1
   _collisionDetectionMode: 1
-  _joints: []
-  _isSetup: 0
+  _DebugValueChanger: 0
 --- !u!4 &908972539
 Transform:
   m_ObjectHideFlags: 0
@@ -2624,7 +2623,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &938442312
 Transform:
   m_ObjectHideFlags: 0
@@ -4256,7 +4255,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1101414233
 Transform:
   m_ObjectHideFlags: 0
@@ -4348,7 +4347,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008a815a852fc8f458f367538eaeee57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Actualize: 0
   _endChains:
   - {fileID: 1394635563}
   - {fileID: 1773632262}
@@ -4359,6 +4357,7 @@ MonoBehaviour:
   - {fileID: 1620412893}
   _isLocalRotationBonesEnable: 1
   _isOffsetedBonesEnable: 1
+  _isFollowingRotation: 1
   _positionSpring: 20000
   _positionDamper: 1000
   _connectedMassScale: 0.25
@@ -4367,8 +4366,7 @@ MonoBehaviour:
   _useGravity: 1
   _interpolation: 1
   _collisionDetectionMode: 1
-  _joints: []
-  _isSetup: 0
+  _DebugValueChanger: 0
 --- !u!1 &1107428018
 GameObject:
   m_ObjectHideFlags: 0
@@ -7390,7 +7388,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008a815a852fc8f458f367538eaeee57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Actualize: 0
   _endChains:
   - {fileID: 4042427859362884725}
   - {fileID: 8044669282157276935}
@@ -7421,16 +7418,16 @@ MonoBehaviour:
   - {fileID: 1029760782}
   _isLocalRotationBonesEnable: 1
   _isOffsetedBonesEnable: 1
+  _isFollowingRotation: 1
   _positionSpring: 20000
   _positionDamper: 1000
-  _connectedMassScale: 0.75
+  _connectedMassScale: 0.5
   _useAcceleration: 1
   _configuredInWorldSpace: 0
   _useGravity: 1
   _interpolation: 1
   _collisionDetectionMode: 1
-  _joints: []
-  _isSetup: 0
+  _DebugValueChanger: 1
 --- !u!54 &1776818012
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8123,13 +8120,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008a815a852fc8f458f367538eaeee57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Actualize: 0
   _endChains:
   - {fileID: 1094515626}
   _endChainsAnim:
   - {fileID: 1964594124}
   _isLocalRotationBonesEnable: 1
   _isOffsetedBonesEnable: 1
+  _isFollowingRotation: 1
   _positionSpring: 20000
   _positionDamper: 1000
   _connectedMassScale: 1
@@ -8138,8 +8135,7 @@ MonoBehaviour:
   _useGravity: 1
   _interpolation: 1
   _collisionDetectionMode: 1
-  _joints: []
-  _isSetup: 0
+  _DebugValueChanger: 0
 --- !u!1 &2059479031
 GameObject:
   m_ObjectHideFlags: 0
