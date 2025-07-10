@@ -80,15 +80,17 @@ public class AutoPhysicRig : MonoBehaviour
     List<ConfigurableJoint> _joints = new List<ConfigurableJoint>();
     float? _connectedMassScaleValueMemory = null;
     float? _positionSpringValueMemory = null;
+    float? _positionDamperValueMemory = null;
     bool _isPhysic = false;
     bool _isSetup = false;
 
-    [Header("Debug :")][SerializeField][Range(0f, 1f)] float _DebugValueChanger = 0f;
+    [Header("Debug :")][SerializeField][Range(0f, 1f)] float _DebugValueChanger = 1f;
 
     private void Start()
     {
         _connectedMassScaleValueMemory = _connectedMassScale;
         _positionSpringValueMemory = _positionSpring;
+        _positionDamperValueMemory = _positionDamper;
 
         if (_isSetup)
             return;
@@ -119,8 +121,8 @@ public class AutoPhysicRig : MonoBehaviour
 
     public void BlendRagdoll(float value)
     {
-        Vector2 bounds = new Vector2(0, (float)_positionSpringValueMemory);
-        var spring = Mathf.Lerp(bounds.x, bounds.y, value);
+        var spring = Mathf.Lerp(0, (float)_positionSpringValueMemory, value);
+        var damper = Mathf.Lerp(0, (float)_positionDamperValueMemory, value);
         var scale = Mathf.Lerp((float)_connectedMassScaleValueMemory, 1, value);
 
         for (int i = 0; i < _joints.Count; i++)
@@ -132,7 +134,7 @@ public class AutoPhysicRig : MonoBehaviour
 
             JointDrive drive = new JointDrive();  //Setup joint drive for motion respond
             drive.positionSpring = spring;
-            drive.positionDamper = _positionDamper;
+            drive.positionDamper = damper;
             drive.maximumForce = Mathf.Infinity;
             drive.useAcceleration = _useAcceleration;
 
@@ -199,11 +201,15 @@ public class AutoPhysicRig : MonoBehaviour
         drive.maximumForce = Mathf.Infinity;
         drive.useAcceleration = _useAcceleration;
 
+        joint.xDrive = drive;  //Apply motion parameter on position
+        joint.yDrive = drive;
+        joint.zDrive = drive;
         joint.angularXDrive = drive;   //Apply motion parameter on axis
         joint.angularYZDrive = drive;
         joint.rotationDriveMode = RotationDriveMode.XYAndZ;  //Rotation mod
         joint.configuredInWorldSpace = _configuredInWorldSpace;    //Can recieve worldspace values
         joint.connectedMassScale = _connectedMassScale;
+        joint.enableCollision = true;
 
         //Liberty of movements for articulations
         joint.angularXMotion = ConfigurableJointMotion.Free;
