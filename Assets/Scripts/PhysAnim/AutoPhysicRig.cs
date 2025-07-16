@@ -68,7 +68,8 @@ public class AutoPhysicRig : MonoBehaviour
     [Header("Joints config :")]
     [SerializeField] float _positionSpring = 20000f;
     [SerializeField] float _positionDamper = 1000f;
-    [SerializeField][Range(0f, 1f)] float _connectedMassScale = 0.3f; //Scale spring short/long
+    [SerializeField] float _maxForce = 500f;
+    [SerializeField][Range(0f, 1f)] float _connectedMassScale = 0.5f; //Scale spring short/long
     [SerializeField] bool _useAcceleration = true;
     [SerializeField] bool _configuredInWorldSpace = false; //Get world position/rotation
 
@@ -79,18 +80,17 @@ public class AutoPhysicRig : MonoBehaviour
 
     List<ConfigurableJoint> _joints = new List<ConfigurableJoint>();
     float? _connectedMassScaleValueMemory = null;
-    float? _positionSpringValueMemory = null;
-    float? _positionDamperValueMemory = null;
+    float _maxForceValueMemory = 0;
     bool _isPhysic = false;
     bool _isSetup = false;
 
-    [Header("Debug :")][SerializeField][Range(0f, 1f)] float _DebugValueChanger = 1f;
+    [Header("Debug :")][SerializeField][Range(0f, 1f)] float _blendRagdoll = 1f;
+    float _blendRagdollValueMemory = 0;
 
     private void Start()
     {
         _connectedMassScaleValueMemory = _connectedMassScale;
-        _positionSpringValueMemory = _positionSpring;
-        _positionDamperValueMemory = _positionDamper;
+        _maxForceValueMemory = _maxForce;
 
         if (_isSetup)
             return;
@@ -105,8 +105,11 @@ public class AutoPhysicRig : MonoBehaviour
 
     private void Update()
     {
-        if (_DebugValueChanger != (float)_connectedMassScaleValueMemory)
-            BlendRagdoll(_DebugValueChanger);
+        if (_blendRagdoll != _blendRagdollValueMemory)
+        {
+            BlendRagdoll(_blendRagdoll);
+            _blendRagdollValueMemory = _blendRagdoll;
+        }
     }
 
     public void ActivatePhysic(bool value)
@@ -121,21 +124,23 @@ public class AutoPhysicRig : MonoBehaviour
 
     public void BlendRagdoll(float value)
     {
-        var spring = Mathf.Lerp(0, (float)_positionSpringValueMemory, value);
-        var damper = Mathf.Lerp(0, (float)_positionDamperValueMemory, value);
-        var scale = Mathf.Lerp((float)_connectedMassScaleValueMemory, 1, value);
+        if (value < 0) value = 0;
+        if (value > 1) value = 1;
+
+        var massScale = Mathf.Lerp(1, _connectedMassScale, value);
+        var force = Mathf.Lerp(0, _maxForceValueMemory, value);
 
         for (int i = 0; i < _joints.Count; i++)
         {
             _joints[i].GetComponent<AnimatePhysicJoint>().IsFollowing = _isFollowingRotation;
 
             var joint = _joints[i].GetComponent<ConfigurableJoint>();
-            joint.massScale = scale;
+            joint.connectedMassScale = massScale;
 
             JointDrive drive = new JointDrive();  //Setup joint drive for motion respond
-            drive.positionSpring = spring;
-            drive.positionDamper = damper;
-            drive.maximumForce = Mathf.Infinity;
+            drive.positionSpring = _positionSpring;
+            drive.positionDamper = _positionDamper;
+            drive.maximumForce = force;
             drive.useAcceleration = _useAcceleration;
 
             joint.angularXDrive = drive;   //Apply motion parameter on axis
@@ -201,9 +206,9 @@ public class AutoPhysicRig : MonoBehaviour
         drive.maximumForce = Mathf.Infinity;
         drive.useAcceleration = _useAcceleration;
 
-        joint.xDrive = drive;  //Apply motion parameter on position
-        joint.yDrive = drive;
-        joint.zDrive = drive;
+        //joint.xDrive = drive;  //Apply motion parameter on position
+        //joint.yDrive = drive;
+        //joint.zDrive = drive;
         joint.angularXDrive = drive;   //Apply motion parameter on axis
         joint.angularYZDrive = drive;
         joint.rotationDriveMode = RotationDriveMode.XYAndZ;  //Rotation mod

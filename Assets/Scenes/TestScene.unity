@@ -326,7 +326,7 @@ Transform:
   m_GameObject: {fileID: 80142348}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.45, y: 3.09, z: 0}
+  m_LocalPosition: {x: 5.14, y: 2.43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2663,13 +2663,14 @@ MonoBehaviour:
   _isFollowingRotation: 1
   _positionSpring: 20000
   _positionDamper: 1000
+  _maxForce: 500
   _connectedMassScale: 0.1
   _useAcceleration: 1
   _configuredInWorldSpace: 0
   _useGravity: 1
   _interpolation: 1
   _collisionDetectionMode: 1
-  _DebugValueChanger: 0
+  _blendRagdoll: 1
 --- !u!4 &908972539
 Transform:
   m_ObjectHideFlags: 0
@@ -4465,13 +4466,14 @@ MonoBehaviour:
   _isFollowingRotation: 1
   _positionSpring: 20000
   _positionDamper: 1000
+  _maxForce: 500
   _connectedMassScale: 0.25
   _useAcceleration: 1
   _configuredInWorldSpace: 0
   _useGravity: 1
   _interpolation: 1
   _collisionDetectionMode: 1
-  _DebugValueChanger: 0
+  _blendRagdoll: 1
 --- !u!1 &1107428018
 GameObject:
   m_ObjectHideFlags: 0
@@ -7613,13 +7615,14 @@ MonoBehaviour:
   _isFollowingRotation: 1
   _positionSpring: 20000
   _positionDamper: 1000
+  _maxForce: 500
   _connectedMassScale: 1
   _useAcceleration: 1
   _configuredInWorldSpace: 0
   _useGravity: 1
   _interpolation: 1
   _collisionDetectionMode: 1
-  _DebugValueChanger: 1
+  _blendRagdoll: 1
 --- !u!54 &1776818012
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8321,13 +8324,14 @@ MonoBehaviour:
   _isFollowingRotation: 1
   _positionSpring: 20000
   _positionDamper: 1000
+  _maxForce: 100000000
   _connectedMassScale: 1
   _useAcceleration: 1
   _configuredInWorldSpace: 0
   _useGravity: 1
   _interpolation: 1
   _collisionDetectionMode: 1
-  _DebugValueChanger: 1
+  _blendRagdoll: 1
 --- !u!1 &2059479031
 GameObject:
   m_ObjectHideFlags: 0
