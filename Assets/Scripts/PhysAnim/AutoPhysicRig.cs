@@ -235,6 +235,9 @@ public class AutoPhysicRig : MonoBehaviour
 
     void UpdateValues()
     {
+        _connectedMassScaleValueMemory = _connectedMassScale;
+        _maxForceValueMemory = _maxForce;
+
         for (int i = 0; i < _joints.Count; i++)
         {
             JointSetUp(_joints[i]);
