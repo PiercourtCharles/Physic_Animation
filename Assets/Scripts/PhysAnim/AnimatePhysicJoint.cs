@@ -2,24 +2,20 @@ using UnityEngine;
 
 public class AnimatePhysicJoint : MonoBehaviour
 {
-    public Transform TargetBone;
-    public bool IsLocal = true;
-    public bool IsOffseted = true;
-    public bool IsFollowing = true;
-
-    [SerializeField] bool _isInvert = true;
+    [HideInInspector] public Transform TargetBone;
+    [HideInInspector] public bool IsFollowing = true;
+    [HideInInspector] public bool UsePhysic = true;
+    [HideInInspector] public bool IsRoot = false;
 
     ConfigurableJoint _joint;
+    Rigidbody _rb;
     Quaternion _offsetRot;
-    Vector3 _offsetLocalPos;
-    Vector3 _offsetPos;
 
-    private void Start()
+    public void Initialize()
     {
         _joint = GetComponent<ConfigurableJoint>();
+        _rb = GetComponent<Rigidbody>();
         _offsetRot = transform.localRotation;
-        //_offsetLocalPos = TargetBone.localPosition;
-        //_offsetPos = TargetBone.position;
     }
 
     void FixedUpdate()
@@ -27,33 +23,31 @@ public class AnimatePhysicJoint : MonoBehaviour
         if (_joint != null && TargetBone != null)
         {
             Quaternion rot;
-            //Vector3 pos;
-
-            if (IsLocal)
-            {
-                rot = TargetBone.localRotation;
-                //pos = TargetBone.localPosition - _offsetPos;
-            }
-            else
-            {
-                rot = TargetBone.rotation;
-                //pos = TargetBone.position - _offsetLocalPos;
-            }
-
-            if (_isInvert)
-            {
-                rot = Quaternion.Inverse(rot);
-                //pos = -pos;
-            }
-
-            if (IsOffseted)
-                rot = rot * _offsetRot;
+            rot = TargetBone.localRotation;
+            rot = Quaternion.Inverse(rot);
+            rot = rot * _offsetRot;
 
             if (IsFollowing)
             {
-                _joint.targetRotation = rot;
-                //_joint.targetPosition = pos;
+                if (UsePhysic)
+                    _joint.targetRotation = rot;
+                else
+                    transform.localRotation = TargetBone.localRotation;
+
+                //if (IsRoot)
+                //    _joint.targetPosition = TargetBone.localPosition;
             }
         }
+    }
+
+    public void ActivatePhysic(bool value)
+    {
+        UsePhysic = value;
+        _rb.useGravity = value;
+
+        if (value)
+            _rb.interpolation = RigidbodyInterpolation.Interpolate;
+        else
+            _rb.interpolation = RigidbodyInterpolation.None;
     }
 }
