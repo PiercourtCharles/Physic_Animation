@@ -44,6 +44,7 @@ public class AnimatePhysicJoint : MonoBehaviour
     {
         UsePhysic = value;
         _rb.useGravity = value;
+        _rb.isKinematic = !value;
 
         if (value)
             _rb.interpolation = RigidbodyInterpolation.Interpolate;

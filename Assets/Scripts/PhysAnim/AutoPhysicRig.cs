@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -15,20 +16,27 @@ public class AutoPhysicRig : MonoBehaviour
             base.OnInspectorGUI();
             AutoPhysicRig autoRig = (AutoPhysicRig)target;
 
+            GUILayout.Label("Setup model :");
+
             if (GUILayout.Button("Setup model"))
             {
+                //autoRig.ResetPhysic();
 
-                autoRig.ResetPhysic();
+                //autoRig.Initialize(); //If Rigidbody not set correctly
 
-                autoRig.Initialize(); //If Rigidbody not set correctly
+                //for (int i = 0; i < autoRig.SubParts.Length; i++)
+                //{
+                //    autoRig.SubParts[i].Initialize();
+                //}
 
-                for (int i = 0; i < autoRig._endChains.Length; i++)
-                {
-                    autoRig.Physicate(autoRig._endChains[i], autoRig._endChainsAnim[i], null);
-                }
+                //for (int i = 0; i < autoRig._endChains.Length; i++)
+                //{
+                //    autoRig.Physicate(autoRig._endChains[i], autoRig._endChainsAnim[i], null);
+                //}
 
-                autoRig._isSetup = true;
-                Debug.Log("Setup components");
+                //autoRig._isSetup = true;
+                //Debug.Log("Setup components");
+                Debug.Log("Actualy in summer break, maybe an other time :/");
             }
 
             if (GUILayout.Button("Update values"))
@@ -44,26 +52,40 @@ public class AutoPhysicRig : MonoBehaviour
                 Debug.Log("Reset components");
             }
 
-            if (GUILayout.Button("Physic enable"))
-            {
-                if (autoRig._connectedMassScaleValueMemory == null)
-                    autoRig._connectedMassScaleValueMemory = autoRig._connectedMassScale;
+            GUILayout.Label("Other stuffs :");
 
-                autoRig.ActivatePhysic(autoRig._isPhysic);
-                autoRig._isPhysic = !autoRig._isPhysic;
-                Debug.Log("Physic enable : " + autoRig._isPhysic);
+            if (GUILayout.Button("Rig search"))
+            {
+                List<Transform> tf = new();
+                tf = autoRig.ChildSearch(autoRig.transform, tf);
+                autoRig._endChains = new Transform[tf.Count];
+
+                for (int i = 0; i < tf.Count; i++)
+                {
+                    autoRig._endChains[i] = tf[i];
+                }
+            }
+
+            if (GUILayout.Button("Sub search"))
+            {
+                for (int i = 0; i < autoRig.SubParts.Length; i++)
+                {
+                    autoRig.SubParts[i].AutoRig = autoRig;
+                    autoRig.SubParts[i].Initialize();
+                }
             }
         }
     }
 #endif
+
     [Header("End branches :")]
     [SerializeField] Transform[] _endChains;
     [SerializeField] Transform[] _endChainsAnim;
-    [SerializeField] Transform[] _limitPoints;
+    //[SerializeField] Transform[] _limitPoints;
 
     [Header("Anim scripts config :")]
-    [SerializeField] bool _isFollowingRotation = true;
-    [SerializeField] bool _isRagdoll = false;
+    [HideInInspector] public bool IsFollowingRotation = true;
+    bool _isRagdoll = false;
 
     [Header("Joints config :")]
     [SerializeField] float _positionSpring = 20000f;
@@ -78,94 +100,23 @@ public class AutoPhysicRig : MonoBehaviour
     [SerializeField] CollisionDetectionMode _collisionDetectionMode = CollisionDetectionMode.Continuous;
 
     List<ConfigurableJoint> _joints = new List<ConfigurableJoint>();
-    float? _connectedMassScaleValueMemory = null;
     float _maxForceValueMemory = 0;
-    bool _isPhysic = false;
     bool _isSetup = false;
 
-    [Header("Debug :")][SerializeField][Range(0f, 1f)] float _blendRagdoll = 1f;
+    [SerializeField][Range(0f, 1f)] float _blendRagdollValue = 1f;
     float _blendRagdollValueMemory = 0;
+    public SubParts[] SubParts;
 
+    #region Start
     private void Start()
     {
-        _connectedMassScaleValueMemory = _connectedMassScale;
         _maxForceValueMemory = _maxForce;
 
         if (_isSetup)
             return;
 
-        Initialize(); //If Rigidbody not set correctly
-
-        for (int i = 0; i < _endChains.Length; i++)
-        {
-            Physicate(_endChains[i], _endChainsAnim[i], null);
-        }
+        Initialize();
     }
-
-    private void Update()
-    {
-        if (_blendRagdoll != _blendRagdollValueMemory)
-        {
-            BlendRagdoll(_blendRagdoll);
-            _blendRagdollValueMemory = _blendRagdoll;
-        }
-    }
-
-    public void ActivatePhysic(bool value)
-    {
-        if (value)
-            _connectedMassScale = (float)_connectedMassScaleValueMemory;
-        else
-            _connectedMassScale = 0;
-
-        JointsUpdate();
-    }
-
-    public void BlendRagdoll(float value)
-    {
-        if (value < 0) value = 0;
-        if (value > 1) value = 1;
-
-        var massScale = Mathf.Lerp(1, _connectedMassScale, value);
-        var force = Mathf.Lerp(0, _maxForceValueMemory, value);
-
-        for (int i = 0; i < _joints.Count; i++)
-        {
-            _joints[i].GetComponent<AnimatePhysicJoint>().IsFollowing = _isFollowingRotation;
-
-            var joint = _joints[i].GetComponent<ConfigurableJoint>();
-            joint.connectedMassScale = massScale;
-
-            JointDrive drive = new JointDrive();  //Setup joint drive for motion respond
-            drive.positionSpring = _positionSpring;
-            drive.positionDamper = _positionDamper;
-            drive.maximumForce = force;
-            drive.useAcceleration = _useAcceleration;
-
-            joint.angularXDrive = drive;   //Apply motion parameter on axis
-            joint.angularYZDrive = drive;
-
-            if (_joints[i].GetComponent<AnimatePhysicJoint>().IsRoot)
-            {
-                if (value <= 0.1f)
-                {
-                    _isRagdoll = true;
-                    joint.xMotion = ConfigurableJointMotion.Free;
-                    joint.yMotion = ConfigurableJointMotion.Free;
-                    joint.zMotion = ConfigurableJointMotion.Free;
-                }
-                else
-                {
-                    _isRagdoll = false;
-                    joint.xMotion = ConfigurableJointMotion.Locked;
-                    joint.yMotion = ConfigurableJointMotion.Locked;
-                    joint.zMotion = ConfigurableJointMotion.Locked;
-                }
-            }
-        }
-    }
-
-
 
     void Initialize() //Root set-up rigidbody
     {
@@ -176,6 +127,16 @@ public class AutoPhysicRig : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeAll;
         //rb.velocity = Vector3.zero;    //"linearVelocity" because of unity 6 else "velocity"
         //rb.angularVelocity = Vector3.zero;
+
+        for (int i = 0; i < _endChains.Length; i++)
+        {
+            Physicate(_endChains[i], _endChainsAnim[i], null);
+        }
+
+        for (int i = 0; i < SubParts.Length; i++)
+        {
+            SubParts[i].Initialize();
+        }
     }
 
     Rigidbody Physicate(Transform tf, Transform tfAnim, AnimatePhysicJoint jointChild)
@@ -206,17 +167,17 @@ public class AutoPhysicRig : MonoBehaviour
 
         //AnimeScript
         anim.TargetBone = tfAnim;
-        anim.IsFollowing = _isFollowingRotation;
+        anim.IsFollowing = IsFollowingRotation;
 
         //Parent check
-        for (int i = 0; i < _limitPoints.Length; i++)
-        {
-            if (tf.parent == _limitPoints[i])
-            {
-                anim.ActivatePhysic(false);
-                break;
-            }
-        }
+        //for (int i = 0; i < _limitPoints.Length; i++)
+        //{
+        //    if (tf.parent == _limitPoints[i])
+        //    {
+        //        anim.ActivatePhysic(false);
+        //        break;
+        //    }
+        //}
 
         var parentJointScript = tf.parent.GetComponent<AnimatePhysicJoint>();
 
@@ -225,8 +186,8 @@ public class AutoPhysicRig : MonoBehaviour
         else
             joint.connectedBody = Physicate(tf.parent, tfAnim.parent, anim);
 
-        if (!anim.UsePhysic && jointChild != null)
-            jointChild.ActivatePhysic(false);
+        //if (!anim.UsePhysic && jointChild != null)
+        //    jointChild.ActivatePhysic(false);
 
         return rb;
     }
@@ -268,19 +229,23 @@ public class AutoPhysicRig : MonoBehaviour
             joint.zMotion = ConfigurableJointMotion.Free;
         }
     }
+    #endregion
 
     #region Update
-    void JointsUpdate()
+    private void Update()
     {
-        for (int i = 0; i < _joints.Count; i++)
+        if (_blendRagdollValue != _blendRagdollValueMemory)
+            BlendRagdoll(_blendRagdollValue);
+
+        for (int i = 0; i < SubParts.Length; i++)
         {
-            JointSetUp(_joints[i], _isRagdoll);
+            if (SubParts[i].BlendRagdollValue != SubParts[i].BlendRagdollValueMemory)
+                SubParts[i].BlendRagdoll(SubParts[i].BlendRagdollValue);
         }
     }
 
     void UpdateValues()
     {
-        _connectedMassScaleValueMemory = _connectedMassScale;
         _maxForceValueMemory = _maxForce;
 
         for (int i = 0; i < _joints.Count; i++)
@@ -295,8 +260,75 @@ public class AutoPhysicRig : MonoBehaviour
 
             //AnimeScript
             var anim = _joints[i].GetComponent<AnimatePhysicJoint>();
-            anim.IsFollowing = _isFollowingRotation;
+            anim.IsFollowing = IsFollowingRotation;
+            anim.ActivatePhysic(anim.UsePhysic);
         }
+
+        for (int i = 0; i < SubParts.Length; i++)
+        {
+            for (int j = 0; j < SubParts[i].Joints.Count; j++)
+            {
+                JointSetUp(SubParts[i].Joints[j].GetComponent<ConfigurableJoint>(), _isRagdoll);
+
+                //Rigidbody
+                var rb = SubParts[i].Joints[j].GetComponent<Rigidbody>();
+                rb.useGravity = _useGravity;
+                rb.interpolation = _interpolation;
+                rb.collisionDetectionMode = _collisionDetectionMode;
+
+                //AnimeScript
+                var anim = SubParts[i].Joints[j].GetComponent<AnimatePhysicJoint>();
+                anim.IsFollowing = IsFollowingRotation;
+
+                SubParts[i].ActivatePhysic(SubParts[i].UsePhysic);
+            }
+        }
+    }
+
+    public void BlendRagdoll(float value)
+    {
+        if (value < 0) value = 0;
+        if (value > 1) value = 1;
+
+        var massScale = Mathf.Lerp(1, _connectedMassScale, value);
+        var force = Mathf.Lerp(0, _maxForceValueMemory, value);
+
+        for (int i = 0; i < _joints.Count; i++)
+        {
+            _joints[i].GetComponent<AnimatePhysicJoint>().IsFollowing = IsFollowingRotation;
+
+            var joint = _joints[i].GetComponent<ConfigurableJoint>();
+            joint.connectedMassScale = massScale;
+
+            JointDrive drive = new JointDrive();  //Setup joint drive for motion respond
+            drive.positionSpring = _positionSpring;
+            drive.positionDamper = _positionDamper;
+            drive.maximumForce = force;
+            drive.useAcceleration = _useAcceleration;
+
+            joint.angularXDrive = drive;   //Apply motion parameter on axis
+            joint.angularYZDrive = drive;
+
+            if (_joints[i].GetComponent<AnimatePhysicJoint>().IsRoot)
+            {
+                if (value <= 0.1f)
+                {
+                    _isRagdoll = true;
+                    joint.xMotion = ConfigurableJointMotion.Free;
+                    joint.yMotion = ConfigurableJointMotion.Free;
+                    joint.zMotion = ConfigurableJointMotion.Free;
+                }
+                else
+                {
+                    _isRagdoll = false;
+                    joint.xMotion = ConfigurableJointMotion.Locked;
+                    joint.yMotion = ConfigurableJointMotion.Locked;
+                    joint.zMotion = ConfigurableJointMotion.Locked;
+                }
+            }
+        }
+
+        _blendRagdollValueMemory = value;
     }
     #endregion
 
@@ -339,4 +371,155 @@ public class AutoPhysicRig : MonoBehaviour
             ExtremeClean(tf.parent);
     }
     #endregion
+
+    List<Transform> ChildSearch(Transform tf, List<Transform> list)
+    {
+        if (tf.childCount == 0)
+            list.Add(tf);
+        else
+        {
+            int number = tf.childCount;
+
+            for (int i = 0; i < number; i++)
+            {
+                ChildSearch(tf.GetChild(i), list);
+            }
+        }
+
+        return list;
+    }
+}
+
+[Serializable]
+public class SubParts
+{
+    [Tooltip("Bones A : Parent")]
+    public Transform A;
+    [Tooltip("Bones B : Child")]
+    public Transform B;
+
+    [Header("Anim scripts config :")]
+    bool _isFollowingRotation = true;
+    bool _isRagdoll = false;
+    public bool UsePhysic = true;
+
+    [Header("Joints config :")]
+    [SerializeField] float _positionSpring = 20000f;
+    [SerializeField] float _positionDamper = 1000f;
+    [SerializeField] float _maxForce = 0;
+    [SerializeField] bool _useAcceleration = true;
+    [Range(0f, 1f)]
+    public float ConnectedMassScale = 0.5f; //Scale spring short/long
+    float _maxForceValueMemory = 0;
+
+    [Header("Debug :")]
+    [Range(0f, 1f)]
+    public float BlendRagdollValue = 1f;
+    [HideInInspector] public float BlendRagdollValueMemory = 0;
+    [HideInInspector] public AutoPhysicRig AutoRig;
+
+    public List<Transform> Joints = new List<Transform>();
+
+    public void Initialize()
+    {
+        _isFollowingRotation = AutoRig.IsFollowingRotation;
+        _maxForceValueMemory = _maxForce;
+
+        Joints.Clear();
+
+        //Check order
+        if (A != null && B != null && FindTransform(A, B.name) == null)
+        {
+            Debug.LogError("A/B not set correctly");
+            return;
+        }
+
+        //Get all bones
+        Transform tf = B;
+
+        while (tf != A)
+        {
+            Joints.Add(tf);
+
+            tf = tf.parent;
+        }
+
+        Joints.Add(A);
+        ActivatePhysic(UsePhysic);
+    }
+
+    public void BlendRagdoll(float value)
+    {
+        if (value < 0) value = 0;
+        if (value > 1) value = 1;
+
+        var massScale = Mathf.Lerp(1, ConnectedMassScale, value);
+        var force = Mathf.Lerp(0, _maxForceValueMemory, value);
+
+        for (int i = 0; i < Joints.Count; i++)
+        {
+            Joints[i].GetComponent<AnimatePhysicJoint>().IsFollowing = _isFollowingRotation;
+
+            var joint = Joints[i].GetComponent<ConfigurableJoint>();
+            joint.connectedMassScale = massScale;
+
+            JointDrive drive = new JointDrive();  //Setup joint drive for motion respond
+            drive.positionSpring = _positionSpring;
+            drive.positionDamper = _positionDamper;
+            drive.maximumForce = force;
+            drive.useAcceleration = _useAcceleration;
+
+            joint.angularXDrive = drive;   //Apply motion parameter on axis
+            joint.angularYZDrive = drive;
+
+            if (Joints[i].GetComponent<AnimatePhysicJoint>().IsRoot)
+            {
+                if (value <= 0.1f)
+                {
+                    _isRagdoll = true;
+                    joint.xMotion = ConfigurableJointMotion.Free;
+                    joint.yMotion = ConfigurableJointMotion.Free;
+                    joint.zMotion = ConfigurableJointMotion.Free;
+                }
+                else
+                {
+                    _isRagdoll = false;
+                    joint.xMotion = ConfigurableJointMotion.Locked;
+                    joint.yMotion = ConfigurableJointMotion.Locked;
+                    joint.zMotion = ConfigurableJointMotion.Locked;
+                }
+            }
+        }
+
+        BlendRagdollValueMemory = value;
+    }
+
+    public void ActivatePhysic(bool value)
+    {
+        for (int i = 0; i < Joints.Count; i++)
+        {
+            var joint = Joints[i].GetComponent<AnimatePhysicJoint>();
+
+            if (joint == null)
+                continue;
+
+            joint.ActivatePhysic(value);
+        }
+    }
+
+    Transform FindTransform(Transform parent, string name)
+    {
+        if (parent.name.Equals(name))
+            return parent;
+
+        foreach (Transform child in parent)
+        {
+            Transform result = FindTransform(child, name);
+
+            if (result != null)
+                return result;
+        }
+
+        return null;
+    }
 }
