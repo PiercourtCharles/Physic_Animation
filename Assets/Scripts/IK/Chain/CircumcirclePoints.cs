@@ -114,7 +114,7 @@ public class CircumcirclePoints : MonoBehaviour
         if (axis.magnitude < 0.001f) // Si "up" est parallèle à AC, prend un autre axe
             axis = Vector3.Cross(Vector3.right, AC_normalized).normalized;
 
-        // Rotation de AC pour positionner B
+        // Rotation de AC pour positionner _b
         Quaternion rotation = Quaternion.AngleAxis(theta * Mathf.Rad2Deg, axis);
         return rotation * AC_normalized * value1;
     }
@@ -153,7 +153,7 @@ public class CircumcirclePoints : MonoBehaviour
     //{
     //    Gizmos.color = Color.red;
     //    Gizmos.DrawWireSphere(A.position, 0.1f);
-    //    Gizmos.DrawWireSphere(B.position, 0.1f);
+    //    Gizmos.DrawWireSphere(_b.position, 0.1f);
     //    Gizmos.DrawWireSphere(C.position, 0.1f);
 
     //    Gizmos.color = Color.blue;

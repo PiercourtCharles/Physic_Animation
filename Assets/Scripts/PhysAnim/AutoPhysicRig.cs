@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.Recorder.OutputPath;
 
-[RequireComponent(typeof(Rigidbody))]
 public class AutoPhysicRig : MonoBehaviour
 {
 #if UNITY_EDITOR
@@ -20,23 +20,9 @@ public class AutoPhysicRig : MonoBehaviour
 
             if (GUILayout.Button("Setup model"))
             {
-                //autoRig.ResetPhysic();
-
-                //autoRig.Initialize(); //If Rigidbody not set correctly
-
-                //for (int i = 0; i < autoRig.SubParts.Length; i++)
-                //{
-                //    autoRig.SubParts[i].Initialize();
-                //}
-
-                //for (int i = 0; i < autoRig._endChains.Length; i++)
-                //{
-                //    autoRig.Physicate(autoRig._endChains[i], autoRig._endChainsAnim[i], null);
-                //}
-
-                //autoRig._isSetup = true;
-                //Debug.Log("Setup components");
-                Debug.Log("Actualy in summer break, maybe an other time :/");
+                autoRig.ResetPhysic();
+                autoRig.Initialize();
+                Debug.Log("Setup components");
             }
 
             if (GUILayout.Button("Update values"))
@@ -48,60 +34,55 @@ public class AutoPhysicRig : MonoBehaviour
             if (GUILayout.Button("Clean model"))
             {
                 autoRig.ResetPhysic();
-                autoRig._isSetup = false;
                 Debug.Log("Reset components");
             }
 
             GUILayout.Label("Other stuffs :");
 
-            if (GUILayout.Button("Rig search"))
-            {
-                List<Transform> tf = new();
-                tf = autoRig.ChildSearch(autoRig.transform, tf);
-                autoRig._endChains = new Transform[tf.Count];
+            //if (GUILayout.Button("Rig search"))
+            //{
+            //    List<Transform> tf = new();
+            //    tf = autoRig.ChildSearch(autoRig.transform, tf);
+            //    autoRig._endChains = new Transform[tf.Count];
 
-                for (int i = 0; i < tf.Count; i++)
-                {
-                    autoRig._endChains[i] = tf[i];
-                }
-            }
+            //    for (int i = 0; i < tf.Count; i++)
+            //    {
+            //        autoRig._endChains[i] = tf[i];
+            //    }
+            //}
 
-            if (GUILayout.Button("Sub search"))
+            if (GUILayout.Button("SubGroups joints search"))
             {
-                for (int i = 0; i < autoRig.SubParts.Length; i++)
-                {
-                    autoRig.SubParts[i].AutoRig = autoRig;
-                    autoRig.SubParts[i].Initialize();
-                }
+                autoRig.InitializeSubGroups();
             }
         }
     }
 #endif
 
     [Header("End branches :")]
+    [SerializeField] Transform _root;
     [SerializeField] Transform[] _endChains;
     [SerializeField] Transform[] _endChainsAnim;
-    //[SerializeField] Transform[] _limitPoints;
 
     [Header("Anim scripts config :")]
     [HideInInspector] public bool IsFollowingRotation = true;
-    bool _isRagdoll = false;
+    public bool IsFreeMotion = false;
+    public bool UsePhysic = true;
 
     [Header("Joints config :")]
     [SerializeField] float _positionSpring = 20000f;
     [SerializeField] float _positionDamper = 1000f;
     [SerializeField] float _maxForce = 500f;
-    [SerializeField][Range(0f, 1f)] float _connectedMassScale = 0.5f; //Scale spring short/long
     [SerializeField] bool _useAcceleration = true;
+    [SerializeField][Range(0.1f, 1f)] float _connectedMassScale = 0.5f; //Scale spring short/long
 
     [Header("Rigidbodies config :")]
     [SerializeField] bool _useGravity = true;
     [SerializeField] RigidbodyInterpolation _interpolation = RigidbodyInterpolation.Interpolate;
     [SerializeField] CollisionDetectionMode _collisionDetectionMode = CollisionDetectionMode.Continuous;
 
-    List<ConfigurableJoint> _joints = new List<ConfigurableJoint>();
+    List<Transform> _joints = new();
     float _maxForceValueMemory = 0;
-    bool _isSetup = false;
 
     [SerializeField][Range(0f, 1f)] float _blendRagdollValue = 1f;
     float _blendRagdollValueMemory = 0;
@@ -112,104 +93,116 @@ public class AutoPhysicRig : MonoBehaviour
     {
         _maxForceValueMemory = _maxForce;
 
-        if (_isSetup)
-            return;
-
         Initialize();
     }
 
-    void Initialize() //Root set-up rigidbody
+    public void Initialize()
     {
-        Rigidbody rb = GetComponent<Rigidbody>();
+        Rigidbody rb = _root.GetComponent<Rigidbody>();
+
+        if (rb == null)
+            rb = _root.AddComponent<Rigidbody>();
 
         rb.useGravity = false;
         rb.isKinematic = true;
         rb.constraints = RigidbodyConstraints.FreezeAll;
-        //rb.velocity = Vector3.zero;    //"linearVelocity" because of unity 6 else "velocity"
-        //rb.angularVelocity = Vector3.zero;
 
         for (int i = 0; i < _endChains.Length; i++)
         {
-            Physicate(_endChains[i], _endChainsAnim[i], null);
+            if (!CheckJointList(_endChains[i]))
+                Physicate(_endChains[i], _endChainsAnim[i]);
         }
 
+        InitializeSubGroups();
+    }
+
+    public void InitializeSubGroups()
+    {
         for (int i = 0; i < SubParts.Length; i++)
         {
+            SubParts[i].AutoRig = this;
             SubParts[i].Initialize();
         }
     }
 
-    Rigidbody Physicate(Transform tf, Transform tfAnim, AnimatePhysicJoint jointChild)
+    bool CheckJointList(Transform tf)
     {
-        Rigidbody rb;
+        var anim = tf.GetComponent<AnimatePhysicJoint>();
 
-        if (tf.GetComponent<AnimatePhysicJoint>() != null)
+        if (tf == _root)
+            return true;
+
+        if (anim != null && !_joints.Contains(tf))
         {
-            rb = tf.GetComponent<Rigidbody>();
-            return rb;
+            _joints.Add(tf);
+            return CheckJointList(tf.parent);
         }
 
-        var joint = tf.AddComponent<ConfigurableJoint>();
-        var anim = tf.AddComponent<AnimatePhysicJoint>();
-        anim.Initialize();
-        rb = tf.GetComponent<Rigidbody>();
-        _joints.Add(joint);
+        return false;
+    }
 
-        if (tf.parent.GetComponent<AutoPhysicRig>() != null)
+    Rigidbody Physicate(Transform tf, Transform tfAnim)
+    {
+        var anim = tf.GetComponent<AnimatePhysicJoint>();
+        var joint = tf.GetComponent<ConfigurableJoint>();
+
+        if (anim != null)
+            return null;
+        if (anim == null)
+            anim = tf.AddComponent<AnimatePhysicJoint>();
+        if (joint == null)
+            joint = tf.AddComponent<ConfigurableJoint>();
+
+        var rb = tf.GetComponent<Rigidbody>();
+        var parentJointScript = tf.parent.GetComponent<AnimatePhysicJoint>();
+
+        if (tf.parent == _root)
             anim.IsRoot = true;
 
-        JointSetUp(joint, _isRagdoll); //Joint
+        _joints.Add(tf);
+        JointSetUp(joint);
 
         //Rigidbody
         rb.useGravity = _useGravity;
         rb.interpolation = _interpolation;
         rb.collisionDetectionMode = _collisionDetectionMode;
 
+        anim.Initialize();
+
         //AnimeScript
         anim.TargetBone = tfAnim;
+        anim.PositionSpring = _positionSpring;
+        anim.PositionDamper = _positionDamper;
+        anim.ConnectedMassScale = _connectedMassScale;
+        anim.MaxForceValueMemory = _maxForce;
+        anim.UseAcceleration = _useAcceleration;
         anim.IsFollowing = IsFollowingRotation;
+        anim.UsePhysic = UsePhysic;
+        anim.ActivatePhysic(anim.UsePhysic);
 
-        //Parent check
-        //for (int i = 0; i < _limitPoints.Length; i++)
-        //{
-        //    if (tf.parent == _limitPoints[i])
-        //    {
-        //        anim.ActivatePhysic(false);
-        //        break;
-        //    }
-        //}
-
-        var parentJointScript = tf.parent.GetComponent<AnimatePhysicJoint>();
-
-        if (parentJointScript != null || tf.parent.GetComponent<AutoPhysicRig>() != null)
+        if (parentJointScript != null || tf.parent == _root)
             joint.connectedBody = tf.parent.GetComponent<Rigidbody>();
         else
-            joint.connectedBody = Physicate(tf.parent, tfAnim.parent, anim);
-
-        //if (!anim.UsePhysic && jointChild != null)
-        //    jointChild.ActivatePhysic(false);
+            joint.connectedBody = Physicate(tf.parent, tfAnim.parent);
 
         return rb;
     }
 
-    void JointSetUp(ConfigurableJoint joint, bool ragdoll)
+    void JointSetUp(ConfigurableJoint joint)
     {
         if (!joint.transform.GetComponent<AnimatePhysicJoint>().UsePhysic)
             return;
 
         //Joint config
-        JointDrive drive = new JointDrive();  //Setup joint drive for motion respond
+        JointDrive drive = new JointDrive();
         drive.positionSpring = _positionSpring;
         drive.positionDamper = _positionDamper;
         drive.maximumForce = Mathf.Infinity;
         drive.useAcceleration = _useAcceleration;
 
-        //joint.xDrive = drive;  //Apply motion parameter on position
-        //joint.yDrive = drive;
-        //joint.zDrive = drive;
-        joint.angularXDrive = drive;   //Apply motion parameter on axis
+        joint.angularXDrive = drive;
         joint.angularYZDrive = drive;
-        joint.rotationDriveMode = RotationDriveMode.XYAndZ;  //Rotation mod
+        joint.rotationDriveMode = RotationDriveMode.XYAndZ;
         joint.connectedMassScale = _connectedMassScale;
         joint.enableCollision = true;
 
@@ -221,19 +214,17 @@ public class AutoPhysicRig : MonoBehaviour
         joint.xMotion = ConfigurableJointMotion.Locked;
         joint.yMotion = ConfigurableJointMotion.Locked;
         joint.zMotion = ConfigurableJointMotion.Locked;
-
-        if (ragdoll && joint.GetComponent<AnimatePhysicJoint>() != null && joint.GetComponent<AnimatePhysicJoint>().IsRoot)
-        {
-            joint.xMotion = ConfigurableJointMotion.Free;
-            joint.yMotion = ConfigurableJointMotion.Free;
-            joint.zMotion = ConfigurableJointMotion.Free;
-        }
     }
     #endregion
 
     #region Update
     private void Update()
     {
+        for (int i = 0; i < _joints.Count; i++)
+        {
+            _joints[i].GetComponent<AnimatePhysicJoint>().FreeMotionRoot(IsFreeMotion);
+        }
+
         if (_blendRagdollValue != _blendRagdollValueMemory)
             BlendRagdoll(_blendRagdollValue);
 
@@ -241,16 +232,18 @@ public class AutoPhysicRig : MonoBehaviour
         {
             if (SubParts[i].BlendRagdollValue != SubParts[i].BlendRagdollValueMemory)
                 SubParts[i].BlendRagdoll(SubParts[i].BlendRagdollValue);
+
+            SubParts[i].A.GetComponent<AnimatePhysicJoint>().FreeMotion(SubParts[i].IsFreeMotion);
         }
     }
 
-    void UpdateValues()
+    public void UpdateValues()
     {
         _maxForceValueMemory = _maxForce;
 
         for (int i = 0; i < _joints.Count; i++)
         {
-            JointSetUp(_joints[i], _isRagdoll);
+            JointSetUp(_joints[i].GetComponent<ConfigurableJoint>());
 
             //Rigidbody
             var rb = _joints[i].GetComponent<Rigidbody>();
@@ -259,29 +252,34 @@ public class AutoPhysicRig : MonoBehaviour
             rb.collisionDetectionMode = _collisionDetectionMode;
 
             //AnimeScript
+            bool isInSub = false;
+
+            for (int j = 0; j < SubParts.Length; j++)
+            {
+                if (SubParts[j].Joints.Contains(_joints[i]))
+                    isInSub = true;
+            }
+
+            if (isInSub)
+                continue;
+
             var anim = _joints[i].GetComponent<AnimatePhysicJoint>();
+            anim.PositionSpring = _positionSpring;
+            anim.PositionDamper = _positionDamper;
+            anim.ConnectedMassScale = _connectedMassScale;
+            anim.MaxForceValueMemory = _maxForce;
             anim.IsFollowing = IsFollowingRotation;
+            anim.UseAcceleration = _useAcceleration;
+            anim.UsePhysic = UsePhysic;
             anim.ActivatePhysic(anim.UsePhysic);
+
+            var jointScript = _joints[i].GetComponent<AnimatePhysicJoint>();
+            jointScript.ActivatePhysic(jointScript.UsePhysic);
         }
 
         for (int i = 0; i < SubParts.Length; i++)
         {
-            for (int j = 0; j < SubParts[i].Joints.Count; j++)
-            {
-                JointSetUp(SubParts[i].Joints[j].GetComponent<ConfigurableJoint>(), _isRagdoll);
-
-                //Rigidbody
-                var rb = SubParts[i].Joints[j].GetComponent<Rigidbody>();
-                rb.useGravity = _useGravity;
-                rb.interpolation = _interpolation;
-                rb.collisionDetectionMode = _collisionDetectionMode;
-
-                //AnimeScript
-                var anim = SubParts[i].Joints[j].GetComponent<AnimatePhysicJoint>();
-                anim.IsFollowing = IsFollowingRotation;
-
-                SubParts[i].ActivatePhysic(SubParts[i].UsePhysic);
-            }
+            SubParts[i].UpdateValues();
         }
     }
 
@@ -290,42 +288,15 @@ public class AutoPhysicRig : MonoBehaviour
         if (value < 0) value = 0;
         if (value > 1) value = 1;
 
-        var massScale = Mathf.Lerp(1, _connectedMassScale, value);
-        var force = Mathf.Lerp(0, _maxForceValueMemory, value);
+
+        bool ragdoll = true;
+
+        if (value > 0)
+            ragdoll = false;
 
         for (int i = 0; i < _joints.Count; i++)
         {
-            _joints[i].GetComponent<AnimatePhysicJoint>().IsFollowing = IsFollowingRotation;
-
-            var joint = _joints[i].GetComponent<ConfigurableJoint>();
-            joint.connectedMassScale = massScale;
-
-            JointDrive drive = new JointDrive();  //Setup joint drive for motion respond
-            drive.positionSpring = _positionSpring;
-            drive.positionDamper = _positionDamper;
-            drive.maximumForce = force;
-            drive.useAcceleration = _useAcceleration;
-
-            joint.angularXDrive = drive;   //Apply motion parameter on axis
-            joint.angularYZDrive = drive;
-
-            if (_joints[i].GetComponent<AnimatePhysicJoint>().IsRoot)
-            {
-                if (value <= 0.1f)
-                {
-                    _isRagdoll = true;
-                    joint.xMotion = ConfigurableJointMotion.Free;
-                    joint.yMotion = ConfigurableJointMotion.Free;
-                    joint.zMotion = ConfigurableJointMotion.Free;
-                }
-                else
-                {
-                    _isRagdoll = false;
-                    joint.xMotion = ConfigurableJointMotion.Locked;
-                    joint.yMotion = ConfigurableJointMotion.Locked;
-                    joint.zMotion = ConfigurableJointMotion.Locked;
-                }
-            }
+            _joints[i].GetComponent<AnimatePhysicJoint>().RagdollJoint(_joints[i].transform, value, ragdoll);
         }
 
         _blendRagdollValueMemory = value;
@@ -333,7 +304,7 @@ public class AutoPhysicRig : MonoBehaviour
     #endregion
 
     #region Clean
-    void ResetPhysic()
+    public void ResetPhysic()
     {
         if (_joints.Count > 0)
         {
@@ -347,6 +318,7 @@ public class AutoPhysicRig : MonoBehaviour
                 DestroyImmediate(rb);
             }
 
+            DestroyImmediate(_root.GetComponent<Rigidbody>());
             _joints.Clear();
         }
         else
@@ -355,6 +327,7 @@ public class AutoPhysicRig : MonoBehaviour
             {
                 ExtremeClean(_endChains[i]);
             }
+            ExtremeClean(_root);
         }
     }
 
@@ -396,21 +369,26 @@ public class SubParts
     [Tooltip("Bones A : Parent")]
     public Transform A;
     [Tooltip("Bones B : Child")]
-    public Transform B;
+    [SerializeField] Transform[] _b;
 
     [Header("Anim scripts config :")]
-    bool _isFollowingRotation = true;
-    bool _isRagdoll = false;
+    [HideInInspector] public bool IsFollowingRotation = true;
+    public bool IsFreeMotion = false;
     public bool UsePhysic = true;
 
     [Header("Joints config :")]
-    [SerializeField] float _positionSpring = 20000f;
-    [SerializeField] float _positionDamper = 1000f;
-    [SerializeField] float _maxForce = 0;
-    [SerializeField] bool _useAcceleration = true;
-    [Range(0f, 1f)]
-    public float ConnectedMassScale = 0.5f; //Scale spring short/long
-    float _maxForceValueMemory = 0;
+    public float PositionSpring = 20000f;
+    public float PositionDamper = 1000f;
+    public float MaxForce = 0;
+    [HideInInspector] public float MaxForceValueMemory = 0;
+    public bool UseAcceleration = true;
+    [Range(0.1f, 1f)]
+    public float ConnectedMassScale = 0.5f;
+
+    [Header("Rigidbodies config :")]
+    [SerializeField] bool _useGravity = true;
+    [SerializeField] RigidbodyInterpolation _interpolation = RigidbodyInterpolation.Interpolate;
+    [SerializeField] CollisionDetectionMode _collisionDetectionMode = CollisionDetectionMode.Continuous;
 
     [Header("Debug :")]
     [Range(0f, 1f)]
@@ -422,30 +400,85 @@ public class SubParts
 
     public void Initialize()
     {
-        _isFollowingRotation = AutoRig.IsFollowingRotation;
-        _maxForceValueMemory = _maxForce;
+        IsFollowingRotation = AutoRig.IsFollowingRotation;
+        MaxForceValueMemory = MaxForce;
 
         Joints.Clear();
 
         //Check order
-        if (A != null && B != null && FindTransform(A, B.name) == null)
+        for (int i = 0; i < _b.Length; i++)
         {
-            Debug.LogError("A/B not set correctly");
-            return;
+            if (A != null && _b != null && FindTransform(A, _b[i].name) == null)
+            {
+                Debug.LogError("A/B not set correctly");
+                return;
+            }
         }
 
-        //Get all bones
-        Transform tf = B;
-
-        while (tf != A)
+        for (int i = 0; i < _b.Length; i++)
         {
-            Joints.Add(tf);
-
-            tf = tf.parent;
+            ListSub(_b[i]);
         }
 
         Joints.Add(A);
         ActivatePhysic(UsePhysic);
+    }
+
+    void ListSub(Transform tf)
+    {
+        if (tf == A)
+            return;
+
+        if (!Joints.Contains(tf))
+            Joints.Add(tf);
+
+        ListSub(tf.parent);
+    }
+
+    public void UpdateValues()
+    {
+        MaxForceValueMemory = MaxForce;
+
+        for (int i = 0; i < Joints.Count; i++)
+        {
+            JointSetUp(Joints[i].GetComponent<ConfigurableJoint>());
+
+            //Rigidbody
+            var rb = Joints[i].GetComponent<Rigidbody>();
+            rb.useGravity = _useGravity;
+            rb.interpolation = _interpolation;
+            rb.collisionDetectionMode = _collisionDetectionMode;
+
+            ActivatePhysic(UsePhysic);
+        }
+    }
+
+    void JointSetUp(ConfigurableJoint joint)
+    {
+        if (!joint.transform.GetComponent<AnimatePhysicJoint>().UsePhysic)
+            return;
+
+        //Joint config
+        JointDrive drive = new JointDrive();
+        drive.positionSpring = PositionSpring;
+        drive.positionDamper = PositionDamper;
+        drive.maximumForce = Mathf.Infinity;
+        drive.useAcceleration = UseAcceleration;
+
+        joint.angularXDrive = drive;
+        joint.angularYZDrive = drive;
+        joint.rotationDriveMode = RotationDriveMode.XYAndZ;
+        joint.connectedMassScale = ConnectedMassScale;
+        joint.enableCollision = true;
+
+        //Liberty of movements for articulations
+        joint.angularXMotion = ConfigurableJointMotion.Free;
+        joint.angularYMotion = ConfigurableJointMotion.Free;
+        joint.angularZMotion = ConfigurableJointMotion.Free;
+
+        joint.xMotion = ConfigurableJointMotion.Locked;
+        joint.yMotion = ConfigurableJointMotion.Locked;
+        joint.zMotion = ConfigurableJointMotion.Locked;
     }
 
     public void BlendRagdoll(float value)
@@ -453,42 +486,15 @@ public class SubParts
         if (value < 0) value = 0;
         if (value > 1) value = 1;
 
-        var massScale = Mathf.Lerp(1, ConnectedMassScale, value);
-        var force = Mathf.Lerp(0, _maxForceValueMemory, value);
+
+        bool ragdoll = true;
+
+        if (value > 0)
+            ragdoll = false;
 
         for (int i = 0; i < Joints.Count; i++)
         {
-            Joints[i].GetComponent<AnimatePhysicJoint>().IsFollowing = _isFollowingRotation;
-
-            var joint = Joints[i].GetComponent<ConfigurableJoint>();
-            joint.connectedMassScale = massScale;
-
-            JointDrive drive = new JointDrive();  //Setup joint drive for motion respond
-            drive.positionSpring = _positionSpring;
-            drive.positionDamper = _positionDamper;
-            drive.maximumForce = force;
-            drive.useAcceleration = _useAcceleration;
-
-            joint.angularXDrive = drive;   //Apply motion parameter on axis
-            joint.angularYZDrive = drive;
-
-            if (Joints[i].GetComponent<AnimatePhysicJoint>().IsRoot)
-            {
-                if (value <= 0.1f)
-                {
-                    _isRagdoll = true;
-                    joint.xMotion = ConfigurableJointMotion.Free;
-                    joint.yMotion = ConfigurableJointMotion.Free;
-                    joint.zMotion = ConfigurableJointMotion.Free;
-                }
-                else
-                {
-                    _isRagdoll = false;
-                    joint.xMotion = ConfigurableJointMotion.Locked;
-                    joint.yMotion = ConfigurableJointMotion.Locked;
-                    joint.zMotion = ConfigurableJointMotion.Locked;
-                }
-            }
+            Joints[i].GetComponent<AnimatePhysicJoint>().RagdollJoint(Joints[i].transform, value, ragdoll);
         }
 
         BlendRagdollValueMemory = value;
