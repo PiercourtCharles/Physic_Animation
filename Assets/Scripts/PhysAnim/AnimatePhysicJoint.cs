@@ -118,9 +118,7 @@ public class AnimatePhysicJoint : MonoBehaviour
             _joint.zMotion = ConfigurableJointMotion.Free;
 
             IsRagdoll = true;
-
-            if (!IsRoot)
-                transform.SetParent(null);
+            transform.SetParent(null);
         }
         else
         {
@@ -130,8 +128,7 @@ public class AnimatePhysicJoint : MonoBehaviour
             if (!_usePhysicMemory)
                 ActivatePhysic(false);
 
-            if (!IsRoot)
-                transform.SetParent(_tfParent);
+            transform.SetParent(_tfParent);
 
             IsRagdoll = false;
             _rb.velocity = Vector3.zero;
