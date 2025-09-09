@@ -36,7 +36,7 @@ public class AutoPhysicRig : MonoBehaviour
                 Debug.Log("Reset components");
             }
 
-            GUILayout.Label("Other stuffs :");
+            GUILayout.Label("Sub Parts :");
 
             //if (GUILayout.Button("Rig search"))
             //{
@@ -298,6 +298,7 @@ public class AutoPhysicRig : MonoBehaviour
             _joints[i].GetComponent<AnimatePhysicJoint>().RagdollJoint(_joints[i].transform, value, ragdoll);
         }
 
+        _blendRagdollValue = value;
         _blendRagdollValueMemory = value;
     }
     #endregion

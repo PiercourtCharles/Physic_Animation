@@ -70,7 +70,10 @@ public class AnimatePhysicJoint : MonoBehaviour
         if (value)
             _rb.interpolation = _rbInterpoMemory;
         else
+        {
             _rb.interpolation = RigidbodyInterpolation.None;
+            transform.localPosition = _originPos;
+        }
     }
 
     public void RagdollJoint(Transform joint, float value, bool free)
