@@ -33,3 +33,7 @@ On the script:
 <br><br>
 * __*Buttons*__ One to `Setup` the model before playmode for specific values, `Update` to update values and `Clean` to delete components setup before
   `SubGroups` is to search elements between A and B outside playmode
+
+  ## Exemples of results
+![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/1.Morning.gif)
+![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/2.MoitiéDur.gif)
