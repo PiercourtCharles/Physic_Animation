@@ -34,6 +34,6 @@ On the script:
 * __*Buttons*__ One to `Set up` the model before playmode for specific values, `Update` to update values and `Clean` to delete components setup before
   `SubGroups` is to search elements between A and B outside playmode
 
-  ## Exqmples of results
+  ## Examples of results
 ![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/1.Morning.gif)
 ![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/2.MoitiéDur.gif)
