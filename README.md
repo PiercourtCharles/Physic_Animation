@@ -3,7 +3,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/ActivRagdoll.gif)
+![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](Assets/GitDocs/ActivRagdoll.gif)
 
 First of all, this project has the objective of making an animation tool about physics and animation.
 
@@ -17,7 +17,7 @@ Here's what we need next:
 
 Next let's see how to make it work!
 
-![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/Script.png)
+![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](Assets/GitDocs/Script.png)
 
 On the script:
 * __*Root*__ is for the root of the model
@@ -29,12 +29,12 @@ On the script:
 * __*Blend Ragdoll Value*__ Literaly to blend ragdoll 
 <br><br>
 * __*Sub Parts*__ Same thing as the principal script but apply from A to B in a part of the model
-  ![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/SubParts.png)
+  ![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](Assets/GitDocs/SubParts.png)
 <br><br>
 * __*Buttons*__ One to `Set up` the model before playmode for specific values, `Update` to update values and `Clean` to delete components setup before
   `SubGroups` is to search elements between A and B outside playmode
 
   ## Examples of results
-![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/ActivRagdoll.gif)
-![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/ArmLock.gif)
-![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](https://github.com/Dr-Charlous/Un_AnimPhysic/blob/main/Assets/GitDocs/RagdollFall.gif)
+![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](Assets/GitDocs/ActivRagdoll.gif)
+![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](Assets/GitDocs/ArmLock.gif)
+![https://github.com/Your_Repository_Name/Your_GIF_Name.gif](Assets/GitDocs/RagdollFall.gif)
