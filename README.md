@@ -1,4 +1,4 @@
-### Welcome to my physic animation tool project 👋
+### Welcome to my active ragdoll tool project for Unity 👋
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
